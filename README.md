@@ -16,6 +16,7 @@ app.mjs                     ← จุดเริ่ม server, mount routers, 
 routers/
   questions.router.mjs      ← CRUD คำถาม + ค้นหาคำถาม
   answers.router.mjs        ← สร้าง/ดู/ลบคำตอบของคำถาม
+  vote.router.mjs           ← โหวตคำถามและคำตอบ
 utils/
   db.mjs                    ← PostgreSQL connection pool
 db.sql                      ← Script สร้างตาราง + seed ข้อมูลตัวอย่าง
@@ -70,3 +71,10 @@ db.sql                      ← Script สร้างตาราง + seed ข
 | POST | `/questions/:questionId/answers` | สร้างคำตอบให้คำถาม (`content` ไม่เกิน 300 ตัวอักษร) |
 | GET | `/questions/:questionId/answers` | ดูคำตอบทั้งหมดของคำถาม |
 | DELETE | `/questions/:questionId/answers` | ลบคำตอบทั้งหมดของคำถาม |
+
+### Vote
+
+| Method | Endpoint | คำอธิบาย |
+|---|---|---|
+| POST | `/questions/:questionId/vote` | โหวตคำถาม (`vote` ต้องเป็น `1` หรือ `-1`) |
+| POST | `/answers/:answerId/vote` | โหวตคำตอบ (`vote` ต้องเป็น `1` หรือ `-1`) |
