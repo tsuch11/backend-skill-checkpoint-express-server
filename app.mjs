@@ -1,5 +1,6 @@
 import express from "express";
 import questionsRouter from "./routers/questions.router.mjs";
+import answersRouter from "./routers/answers.router.mjs";
 
 const app = express();
 const port = 4000;
@@ -11,6 +12,7 @@ app.get("/test", (req, res) => {
 });
 
 app.use("/questions", questionsRouter);
+app.use("/questions", answersRouter);
 
 app.use((req, res) => {
   return res.status(404).json({ message: "Route not found." });

@@ -15,6 +15,7 @@ REST API หลังบ้านสำหรับเว็บไซต์ถ�
 app.mjs                     ← จุดเริ่ม server, mount routers, error handling
 routers/
   questions.router.mjs      ← CRUD คำถาม + ค้นหาคำถาม
+  answers.router.mjs        ← สร้าง/ดู/ลบคำตอบของคำถาม
 utils/
   db.mjs                    ← PostgreSQL connection pool
 db.sql                      ← Script สร้างตาราง + seed ข้อมูลตัวอย่าง
@@ -62,4 +63,10 @@ db.sql                      ← Script สร้างตาราง + seed ข
 | PUT | `/questions/:questionId` | แก้ไขหัวข้อ/คำอธิบาย/หมวดหมู่ของคำถาม |
 | DELETE | `/questions/:questionId` | ลบคำถาม (คำตอบที่ผูกกับคำถามนี้จะถูกลบตามไปด้วย) |
 
-> Endpoint สำหรับ Answers และ Vote จะตามมาในเวอร์ชันถัดไป
+### Answers
+
+| Method | Endpoint | คำอธิบาย |
+|---|---|---|
+| POST | `/questions/:questionId/answers` | สร้างคำตอบให้คำถาม (`content` ไม่เกิน 300 ตัวอักษร) |
+| GET | `/questions/:questionId/answers` | ดูคำตอบทั้งหมดของคำถาม |
+| DELETE | `/questions/:questionId/answers` | ลบคำตอบทั้งหมดของคำถาม |
