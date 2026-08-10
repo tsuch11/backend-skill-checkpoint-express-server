@@ -28,13 +28,33 @@ questionsRouter.post("/", async (req, res) => {
 });
 
 questionsRouter.get("/", async (req, res) => {
-  try {
-    const result = await connectionPool.query(`SELECT * FROM questions ORDER BY id ASC`);
+  const page = Number(req.query.page ?? 1);
+	const limit = Number(req.query.limit ?? 10);
 
-    return res.status(200).json({ data: result.rows });
-  } catch (error) {
-    return res.status(500).json({ message: "Unable to fetch questions." });
-  }
+	if (page < 1 || limit < 1) {
+		return res.status(400).json({ message: "Invalid pagination parameters." });
+	}
+
+	const offset = (page - 1) * limit;
+
+	try {
+		const [dataResult, countResult] = await Promise.all([
+			connectionPool.query(`SELECT * FROM questions ORDER BY id ASC LIMIT $1 OFFSET $2`, [
+				limit,
+				offset,
+			]),
+			connectionPool.query(`SELECT COUNT(*) FROM questions`),
+		]);
+
+		return res.status(200).json({
+			data: dataResult.rows,
+			total: Number(countResult.rows[0].count),
+			page,
+			limit,
+		});
+	} catch (error) {
+		return res.status(500).json({ message: "Unable to fetch questions." });
+	}
 });
 
 questionsRouter.get("/search", async (req, res) => {
