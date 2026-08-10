@@ -3,14 +3,18 @@ CREATE TABLE IF NOT EXISTS questions (
 	id SERIAL PRIMARY KEY,
 	title VARCHAR(255) NOT NULL,
 	description TEXT,
-	category VARCHAR(255)
+	category VARCHAR(255),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- สร้างตาราง answers
 CREATE TABLE IF NOT EXISTS answers (
 	id SERIAL PRIMARY KEY,
 	question_id INTEGER REFERENCES questions(id) ON DELETE CASCADE,
-	content TEXT
+	content TEXT,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- สร้างตาราง question_votes
@@ -131,3 +135,20 @@ BEGIN
 	END LOOP;
 END
 $$;
+
+-- Auto-update updated_at เมื่อมีการ UPDATE
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+	NEW.updated_at = NOW();
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_questions_updated_at
+BEFORE UPDATE ON questions
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_answers_updated_at
+BEFORE UPDATE ON answers
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
